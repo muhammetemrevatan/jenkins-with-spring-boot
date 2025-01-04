@@ -9,13 +9,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/muhammetemrevatan/jenkins-with-spring-boot.git'
+                checkout scm
             }
         }
         
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                bat 'mvn clean install'
             }
         }
         
@@ -23,12 +23,11 @@ pipeline {
             steps {
                 bat 'mvn test'
             }
-        }
-    }
-    
-    post {
-        always {
-            junit '**/target/surefire-reports/*.xml'
+            post {
+                success {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                }
+            }
         }
     }
 } 
