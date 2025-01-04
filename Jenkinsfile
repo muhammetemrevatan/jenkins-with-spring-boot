@@ -5,6 +5,10 @@ pipeline {
         githubPush()
     }
     
+    options {
+        skipDefaultCheckout(true)
+    }
+    
     tools {
         jdk 'JDK17'
         maven 'Maven3'
@@ -13,6 +17,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                cleanWs()
                 checkout scm
             }
         }
@@ -69,6 +74,7 @@ pipeline {
     post {
         always {
             junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+            cleanWs()
         }
         success {
             echo 'Pipeline başarıyla tamamlandı!'
