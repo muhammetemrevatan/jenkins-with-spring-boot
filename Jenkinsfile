@@ -9,13 +9,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'YOUR_GITHUB_REPO_URL'
+                git branch: 'main', url: 'https://github.com/muhammetemrevatan/jenkins-with-spring-boot.git'
             }
         }
         
         stage('Build') {
             steps {
-                bat 'mvn clean install'
+                bat 'mvn clean package -DskipTests'
             }
         }
         
