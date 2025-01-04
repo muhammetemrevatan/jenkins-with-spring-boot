@@ -5,10 +5,6 @@ pipeline {
         githubPush()
     }
     
-    options {
-        skipDefaultCheckout(true)
-    }
-    
     tools {
         jdk 'JDK17'
         maven 'Maven3'
@@ -17,54 +13,37 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                cleanWs()
                 checkout scm
             }
         }
         
-        stage('Build & Test') {
+        stage('Test') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn clean install'
+                        sh 'mvn test'
                     } else {
-                        bat 'mvn clean install'
+                        bat 'mvn test'
                     }
                 }
             }
         }
 
-        stage('Test Coverage') {
+        stage('Build & Deploy') {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'mvn verify'
+                        sh '''
+                            docker rm -f spring-app || true
+                            docker build -t spring-app .
+                            docker run -d --name spring-app -p 8081:8080 spring-app
+                        '''
                     } else {
-                        bat 'mvn verify'
-                    }
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker build -t jenkins-demo .'
-                    } else {
-                        bat 'docker build -t jenkins-demo .'
-                    }
-                }
-            }
-        }
-
-        stage('Docker Deploy') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh 'docker-compose up -d app'
-                    } else {
-                        bat 'docker-compose up -d app'
+                        bat '''
+                            docker rm -f spring-app || true
+                            docker build -t spring-app .
+                            docker run -d --name spring-app -p 8081:8080 spring-app
+                        '''
                     }
                 }
             }
@@ -74,7 +53,6 @@ pipeline {
     post {
         always {
             junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-            cleanWs()
         }
         success {
             echo 'Pipeline başarıyla tamamlandı!'
