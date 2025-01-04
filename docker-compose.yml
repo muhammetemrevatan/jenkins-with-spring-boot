@@ -15,6 +15,16 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
     restart: unless-stopped
 
+  ngrok:
+    image: wernight/ngrok
+    ports:
+      - "4040:4040"
+    environment:
+      - NGROK_AUTH=${NGROK_AUTH_TOKEN}
+      - NGROK_PORT=jenkins:8080
+    depends_on:
+      - jenkins
+
 volumes:
   jenkins_home:
     driver: local
