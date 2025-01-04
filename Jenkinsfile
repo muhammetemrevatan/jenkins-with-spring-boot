@@ -1,33 +1,67 @@
 pipeline {
+
     agent any
+
     
+
     tools {
+
         jdk 'JDK17'
+
         maven 'Maven3'
+
     }
+
     
+
     stages {
+
         stage('Checkout') {
+
             steps {
+
                 checkout scm
+
             }
+
         }
+
         
-        stage('Build') {
+
+        stage('Build & Test') {
+
             steps {
-                sh 'mvn clean install'
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                success {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+
+                script {
+
+                    if (isUnix()) {
+
+                        sh 'mvn clean install'
+
+                    } else {
+
+                        bat 'mvn clean install'
+
+                    }
+
                 }
+
             }
+
         }
+
     }
+
+    
+
+    post {
+
+        always {
+
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+
+        }
+
+    }
+
 } 

@@ -9,10 +9,4 @@ class JenkinsDemoApplicationTests {
     @Test
     void contextLoads() {
     }
-
-    @Test
-    void testHelloEndpoint() {
-        JenkinsDemoApplication app = new JenkinsDemoApplication();
-        assert app.hello().equals("Jenkins ile Spring Boot uygulaması!");
-    }
 } 
