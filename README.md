@@ -1,6 +1,6 @@
 # Jenkins Demo Project
 
-This is a demo project created to integrate Jenkins CI/CD pipeline with a Spring Boot application.
+This is a demo project created to integrate Jenkins CI/CD pipeline with Spring Boot application and Webhook.
 
 ## Technologies
 
